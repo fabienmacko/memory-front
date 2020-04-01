@@ -3,12 +3,6 @@ import MySwal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import socketIOClient from "socket.io-client";
 import Card from '../Card';
-import One from '../../style/images/1.jpeg';
-import Two from '../../style/images/2.jpg';
-import Three from '../../style/images/3.jpeg';
-import Four from '../../style/images/4.jpeg';
-import Five from '../../style/images/5.jpeg';
-import Six from '../../style/images/6.jpeg';
 import './app.scss';
 
 class App extends Component {
@@ -16,7 +10,8 @@ class App extends Component {
     super();
     this.state = {
       endpoint: "http://localhost:4001",
-      images: [One,Two,Three,Four,Five,Six]
+      pseudo: '',
+      cards: false
     };
   }
 
@@ -26,24 +21,7 @@ class App extends Component {
 
   Swal = withReactContent(MySwal);
 
-  shuffle = array => {
-    var currentIndex = array.length, temporaryValue, randomIndex;
-  
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-  
-      // Pick a remaining element...
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-  
-      // And swap it with the current element.
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
-    }
-  
-    return array;
-  }
+
 
   componentDidMount() {
     this.Swal.fire({
@@ -68,8 +46,9 @@ class App extends Component {
               this.Swal.showValidationMessage('Tu as oublié de choisir un pseudo!')
             }
           }
-        }).then(({value}) => {
-          this.socketIo(value);
+        }).then(({value : pseudo}) => {
+          this.socketIo(pseudo);
+          this.setState({pseudo});
         })
     });
 
@@ -86,22 +65,63 @@ class App extends Component {
       }
     })
 
-    return new Promise((resolve,reject) => {
-      socket.on('startGame', data => {
-        resolve(data);
+    return new Promise(resolve => {
+      socket.on('startGame', () => {
+        resolve();
       })
     })
   }
 
-  socketIo = (pseudo) => {
+  changeTurn = socket => {
+
+  }
+
+  cardSelected = imageId => {
+    console.log('clicked on '+imageId);
+    
+  }
+
+  Toast = this.Swal.mixin({
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 20000,
+    timerProgressBar: true
+  })
+  
+  
+
+  socketIo = pseudo => {
 
     const { endpoint } = this.state;
     const socket = socketIOClient(endpoint);
     
     // Socket On
 
+    // Get images in order to have same layout for each player
+    socket.on('images', images => {
+      console.log(images);
+      
+      this.setState({
+        cards: images
+      })
+    });
+
+    // Get current player turn
+    socket.on('player', firstPlayer => {
+      console.log(firstPlayer.pseudo === this.state.pseudo);
+
+      const isCurrentPlayer = firstPlayer.pseudo === this.state.pseudo;
+
+      this.Toast.fire({
+        text: firstPlayer.pseudo+' is playing!',
+        allowOutsideClick: firstPlayer.pseudo === this.state.pseudo,
+        backdrop: !isCurrentPlayer,
+      })
+    });
+
     //Socket Emit
     socket.emit('pseudo', pseudo);
+
 
     // When two players are found, start the game
     this.waitPlayers(socket).then(() => {
@@ -110,11 +130,11 @@ class App extends Component {
   }
 
   render() {
-    const { images } = this.state;
+    const {endpoint} = this.state;
     return (
         <div id="app">
           {
-            this.shuffle([...images, ...images]).map((image, index) => <Card id={"imageToMemorize"+index} key={'imageToMemorize'+index} imageToMemorize={image} />)
+            this.state.cards && this.state.cards.map((imageIndex, index) => <Card id={"imageToMemorize"+index} key={'imageToMemorize'+index} imageToMemorize={endpoint+'/images/'+imageIndex+'.jpeg'} cardSelected={this.cardSelected} />)
           }
         </div>
     );
