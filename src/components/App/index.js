@@ -76,10 +76,7 @@ class App extends Component {
 
   }
 
-  cardSelected = imageId => {
-    console.log('clicked on '+imageId);
-    
-  }
+
 
   Toast = this.Swal.mixin({
     position: 'top-end',
@@ -96,6 +93,7 @@ class App extends Component {
     const socket = socketIOClient(endpoint);
     
     // Socket On
+
 
     // Get images in order to have same layout for each player
     socket.on('images', images => {
@@ -119,9 +117,23 @@ class App extends Component {
       })
     });
 
+
+    socket.on('returnCard', ({imageId,pairId})  => {
+      console.log(this.cardElement);
+      
+      document.querySelector('#'+imageId).className = 'flip-card selected';
+    })
+
+
+
+
     //Socket Emit
     socket.emit('pseudo', pseudo);
 
+
+    this.cardSelected = (imageId, pairId) => {
+      socket.emit('cardSelected', {imageId, pairId})
+    }
 
     // When two players are found, start the game
     this.waitPlayers(socket).then(() => {
@@ -134,7 +146,7 @@ class App extends Component {
     return (
         <div id="app">
           {
-            this.state.cards && this.state.cards.map((imageIndex, index) => <Card id={"imageToMemorize"+index} key={'imageToMemorize'+index} imageToMemorize={endpoint+'/images/'+imageIndex+'.jpeg'} cardSelected={this.cardSelected} />)
+            this.state.cards && this.state.cards.map((imageIndex, index) => <Card ref={element => this.cardElement = element} pair={imageIndex} id={"imageToMemorize"+index} key={'imageToMemorize'+index} imageToMemorize={endpoint+'/images/'+imageIndex+'.jpeg'} cardSelected={this.cardSelected} />)
           }
         </div>
     );

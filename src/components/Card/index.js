@@ -10,13 +10,9 @@ class Card extends Component {
     };
   }
 
-  selectCard = (e) => {
+  selectCard = () => {
     const {cardSelected} = this.props;
-    cardSelected(this.card.id);
-    
-    this.setState({
-      selected: true
-    });
+    cardSelected(this.card.id, this.card.dataset.pair);
     
   }
 
@@ -25,11 +21,11 @@ class Card extends Component {
   }
 
   render() {
-    const {imageToMemorize, id} = this.props;
+    const {imageToMemorize, id, pair} = this.props;
     const {selected} = this.state;
     return (
       <div id="card" onClick={this.selectCard}>
-      <div className={selected ? 'flip-card selected' : 'flip-card'} id={id} ref={element => this.card = element}>
+      <div className={'flip-card'} data-pair={pair} id={id} ref={element => this.card = element}>
         <div className="flip-card-inner">
           <div className="flip-card-front">
             <img src={Cake} alt="Cake" />
