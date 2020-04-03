@@ -73,7 +73,7 @@ class App extends Component {
   }
 
   changeTurn = socket => {
-
+    socket.emit('turn:change');
   }
 
 
@@ -83,7 +83,7 @@ class App extends Component {
     showConfirmButton: false,
     timer: 20000,
     timerProgressBar: true
-  })
+  });
   
   
 
@@ -97,7 +97,6 @@ class App extends Component {
 
     // Get images in order to have same layout for each player
     socket.on('images', images => {
-      console.log(images);
       
       this.setState({
         cards: images
@@ -106,7 +105,6 @@ class App extends Component {
 
     // Get current player turn
     socket.on('player', firstPlayer => {
-      console.log(firstPlayer.pseudo === this.state.pseudo);
 
       const isCurrentPlayer = firstPlayer.pseudo === this.state.pseudo;
 
@@ -114,18 +112,25 @@ class App extends Component {
         text: firstPlayer.pseudo+' is playing!',
         allowOutsideClick: firstPlayer.pseudo === this.state.pseudo,
         backdrop: !isCurrentPlayer,
-      })
+      }).then(() => {
+        this.changeTurn(socket);
+      });
     });
 
-
     socket.on('returnCard', ({imageId,pairId})  => {
-      console.log(this.cardElement);
       
       document.querySelector('#'+imageId).className = 'flip-card selected';
     })
 
-
-
+    socket.on('card:reset', imagesArray => {
+      console.log(imagesArray);
+      
+      setTimeout(() => {
+        imagesArray.forEach(imageObject => {
+          document.querySelector('#'+imageObject.imageId).className = 'flip-card';
+        });
+      }, 1000);
+    })
 
     //Socket Emit
     socket.emit('pseudo', pseudo);
