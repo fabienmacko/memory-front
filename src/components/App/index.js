@@ -35,7 +35,7 @@ class App extends Component {
         this.Swal.fire({
           title: 'Règles du jeu',
           html: 'Les règles sont simples: Chacun notre tour nous allons cliquer sur 2 cartes pour les retourner, en cherchant à trouver la paire. <br>'+
-          'Chaque paire rapporte un point. Celui qui a le plus de point à la fin de la partie gagne une une petite surprise.. (Alors je compte sur toi pour gagner hein sinon c\'est pas drôle 😂) <br>'+
+          'Chaque paire rapporte un point. Celui qui a le plus de point à la fin de la partie gagne la partie (Alors je compte sur toi pour gagner hein sinon c\'est pas drôle 😂) <br>'+
           'Entre ton pseudo, puis en cliquant sur le bouton PLAY la partie va commencer. Bonne chance ! ❤️',
           input: 'text',
           inputPlaceholder: 'Entre ton pseudo ici',
@@ -113,6 +113,8 @@ class App extends Component {
         allowOutsideClick: firstPlayer.pseudo === this.state.pseudo,
         backdrop: !isCurrentPlayer,
       }).then(() => {
+        console.log('then toast executed');
+        
         this.changeTurn(socket);
       });
     });
@@ -130,6 +132,20 @@ class App extends Component {
           document.querySelector('#'+imageObject.imageId).className = 'flip-card';
         });
       }, 1000);
+    })
+
+    socket.on('game:winner', pseudo => {
+      this.Swal.fire({
+        title: 'Et le gagnant de cette partie est...',
+        html: '<h1><strong>'+pseudo+' !</strong></h1><br> Félicitations tu remportes cette partie !',
+        showCancelButton: false,
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Rejouer',
+        allowOutsideClick: false
+      }).then(() => {
+        window.location.reload();
+      });
+
     })
 
     //Socket Emit
