@@ -11,7 +11,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      endpoint: "http://localhost:4001",
+      endpoint: "https://memoryback.herokuapp.com",
       pseudo: '',
       cards: false,
       players: []
