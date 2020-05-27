@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import Cake from '../../style/images/cake.jpg';
+import Interrogation from '../../style/images/interrogation.png';
 import './card.scss';
 
 class Card extends Component {
@@ -17,6 +17,7 @@ class Card extends Component {
   }
 
   componentDidMount() {
+    console.log('mount');
     
   }
 
@@ -28,7 +29,7 @@ class Card extends Component {
       <div className={'flip-card'} data-pair={pair} id={id} ref={element => this.card = element}>
         <div className="flip-card-inner">
           <div className="flip-card-front">
-            <img src={Cake} alt="Cake" />
+            <img src={Interrogation} alt="Interrogation" />
           </div>
           <div className="flip-card-back" style={{
             backgroundImage: 'url('+imageToMemorize+')',

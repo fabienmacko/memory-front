@@ -1,10 +1,11 @@
 #card {
+  margin: 20px;
   .flip-card {
     background-color: transparent;
-    width: 300px;
-    height: 300px;
+    width: 230px;
+    height: 230px;
     cursor: pointer;
-    perspective: 1000px;
+    perspective: 766px;
   }
   
   .flip-card-inner {
@@ -30,7 +31,7 @@
   }
   
   .flip-card-front {
-    background-color: #bbb;
+    background-color: white;
     color: black;
   }
   
