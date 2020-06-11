@@ -19,6 +19,32 @@
   }
 }
 
+@media screen and (max-width: 640px) {
+  .swal2-player_timer {
+    width: 10em !important;
+  }
+  .swal2-content {
+    font-size: .8rem !important;
+  }
+  #app {
+    * {
+      font-size: .8rem !important;
+    }
+    
+    .card-container {
+      margin-top: 0;
+    }
+    #score {
+      top: unset;
+      bottom: 10px;
+      left: 10px; right: 10px;
+      #versus {
+        height: 40px;
+      }
+    }
+  }
+}
+
 body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
   overflow: auto;
 }

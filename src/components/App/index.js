@@ -79,7 +79,10 @@ class App extends Component {
     position: 'top-end',
     showConfirmButton: false,
     timer: 20000,
-    timerProgressBar: true
+    timerProgressBar: true,
+    customClass: {
+      title: 'swal2-player_timer'
+    }
   });
 
   socketIo = pseudo => {
@@ -104,9 +107,7 @@ class App extends Component {
     });
 
     // Get images in order to have same layout for each player
-    socket.on('images', images => {
-      console.log('IMAGES');
-      
+    socket.on('images', images => {    
       this.setState({
         cards: images
       })
@@ -122,7 +123,6 @@ class App extends Component {
         allowOutsideClick: firstPlayer.pseudo === this.state.pseudo,
         backdrop: !isCurrentPlayer,
       }).then(() => {
-        console.log('then toast executed');
         
         this.changeTurn(socket);
       });
@@ -134,8 +134,6 @@ class App extends Component {
     })
 
     socket.on('card:reset', imagesArray => {
-      console.log(imagesArray);
-      
       setTimeout(() => {
         imagesArray.forEach(imageObject => {
           document.querySelector('#'+imageObject.imageId).className = 'flip-card';
@@ -158,8 +156,6 @@ class App extends Component {
     });
 
     socket.on('score:add', (players) => {
-      console.log('adding score here to player '+ players);
-      console.log(players);
       this.setState({players})
       
     });

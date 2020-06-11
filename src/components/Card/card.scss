@@ -47,3 +47,15 @@
     width: 100%;
   }
 }
+
+@media screen and (max-width: 640px) {
+  #card {
+    margin: 2px;
+    .flip-card {
+      width: 90px;
+      height: 90px;
+      cursor: pointer;
+      perspective: 300px;
+    }
+  }
+}
